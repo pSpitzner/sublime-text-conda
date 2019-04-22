@@ -160,6 +160,10 @@ Where `pyexec` is set to `pythonw` in settings. Accordingly, this calls `itermta
 
 ## Other Platforms or Terminal Emulator
 
-`itermtab` is the only thing that has to be rewritten for other terminal emulators. If any other program creates the functionality described above (detect)
+`itermtab` is the only thing that has to be rewritten for other terminal emulators:
+- check if file-specific environment variable is present in any open window/tab/session
+- if found, reuse tab (or creat a new one)
+- else open new tab and set environment variable
+- run command
 
 
