@@ -458,26 +458,51 @@ class ExecuteCondaEnvironmentCommand(CondaCommand):
         The activated conda environment is retrieved from the Sublime Text
         window project data. The Python executable found in the conda
         environment's bin directory is used to build the file.
-        """
-        try:
-            environment = self.project_data['conda_environment']
-            use_pythonw = self.settings.get('use_pythonw', False)
-            run_through_shell = self.settings.get('run_through_shell', False)
 
-            python_executable = 'pythonw' if use_pythonw else 'python'
+        Changed: now needs other build file but you can nest stuff.
+        pypos argument is an integer (starting at 0) saying at which argument
+        position the python exectutable is given for which
+        the conda environment shall be expanded
+        """
+        # print(kwargs['cmd'])
+
+        # get position of python argument via custom variable \\$pyexec variable
+        pypos = kwargs['cmd'].index("$pyexec")
+        python_executable = self.settings.get('pyexec', 'python')
+
+        run_through_shell = self.settings.get('run_through_shell', False)
+        kwargs['shell'] = run_through_shell
+
+        # resolve conda environment for executable location
+        try:
+            environment       = self.project_data['conda_environment']
 
             if sys.platform == 'win32':
-                executable_path = '{}\\{}' .format(environment, python_executable)
+                executable_path = '{}\\{}'.format(environment, python_executable)
             else:
-                executable_path = '{}/bin/{}' .format(environment, python_executable)
+                executable_path = '{}/bin/{}'.format(
+                    environment, python_executable)
 
-            kwargs['cmd'][0] = os.path.normpath(executable_path)
-            kwargs['shell'] = run_through_shell
-
+            kwargs['cmd'][pypos] = os.path.normpath(executable_path)
         except KeyError:
+            # no environment set, uses default python
+            kwargs['cmd'][pypos] = python_executable
+
+        try:
+            # replace custom conda environment variable if present
+            envpos = kwargs['cmd'].index("$condaenv")
+            kwargs['cmd'][envpos] = self.project_data['conda_environment']
+        except:
             pass
 
-        if kwargs.get('kill') is not None:
-            kwargs = {'kill': True}
+        # needed for environment variables when using iTerm
+        kwargs.setdefault('working_dir', os.path.expanduser("~"));
+
+        # print(kwargs)
 
         self.window.run_command('exec', kwargs)
+        # if '-i' is specified i.e. interactive, hide output panel
+        if '-i' in kwargs['cmd']:
+            self.window.run_command("hide_panel", {"panel": "output.exec"})
+            self.window.status_message('Running in iTerm')
+

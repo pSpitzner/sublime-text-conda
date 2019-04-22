@@ -1,0 +1,70 @@
+#!/bin/bash
+
+cmd=""
+args="$@"
+targettab="default"    # set this to the default tab name you want
+profilename="Default"  # set this to the iTerm profile to use
+
+if (( $# > 1 )); then
+    targettab="$1"
+    args="${@:2}"
+fi
+
+if [ -n "$args" ]; then
+    cmd="$args"
+fi
+
+osascript &>/dev/null 2>&1 <<EOF
+    tell application "iTerm"
+        repeat with aWindow in windows
+            repeat with aTab in tabs of aWindow
+                tell current session of aTab
+                    if ("${targettab}" is (variable named "user.sublimetab")) then
+                        set responding to is at shell prompt of current session of aTab
+                        -- set responding to false
+
+                        if not responding then
+                            -- display dialog "closing dead tab"
+                            set parentWindow to aWindow
+                            tell aTab to close
+                            exit repeat
+                        else
+                            -- display dialog "responding tab"
+                            tell aTab
+                                select
+                                activate
+                                tell current session
+                                    write text ""
+                                    write text "${cmd}"
+                                    return
+                                end tell
+                            end tell
+                        end if
+                    end if
+                end tell
+            end repeat
+        end repeat
+        if (count of windows) ≥ 1 then
+            -- display dialog "existing window found"
+            try
+                tell parentWindow to set newtab to (create tab with profile "${profilename}")
+            on error
+                tell (last item of windows) to set newtab to (create tab with profile "${profilename}")
+            end try
+        else
+            -- display dialog "no window"
+            set newTab to (create window with profile "${profilename}")
+        end if
+        tell newTab
+            select
+            activate
+            repeat while not (is at shell prompt of current session of newTab)
+                delay 0.05
+            end repeat
+            tell current session of newTab
+                write text "export SUBLIMETAB=${targettab}; ${cmd}"
+            end tell
+        end tell
+        return
+    end tell
+EOF

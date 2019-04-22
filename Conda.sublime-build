@@ -1,9 +1,17 @@
 {
     // target uses the ExecuteCondaEnvironmentCommand found in commands.py
     "target": "execute_conda_environment",
-    "cmd": ["python", "-u", "$file"],
+    "cmd": ["\\$pyexec", "$file"],
     "file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
     "selector": "source.python",
     "env": {"PYTHONIOENCODING": "utf-8"},
-    "cancel": {"kill": true}
+    "working_dir": "/Users/paul",
+    "cancel": {"kill": true},
+    "variants":
+    [
+        {
+            "name": "iTerm",
+            "cmd": ["itermtab", "$file", "conda activate", "\\$condaenv", ";", "\\$pyexec", "-i", "$file"],
+        }
+    ]
 }

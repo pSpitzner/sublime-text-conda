@@ -4,10 +4,13 @@
     // this python executable is used in order to find conda
     "executable": "~/anaconda3/bin/python3",
 
+    // what python exectuble to use
+    "pyexec": "pythonw",
+
     // Directory in which the conda envs are stored
     // Default location is the user's home directory
     "environment_directory": "~/anaconda3/envs/",
 
     // configuration is the path to conda's configuration file
-    "configuration": "~/.condarc"
+    "configuration": "~/.condarc",
 }
