@@ -152,3 +152,9 @@ itermtab /Users/me/example.py conda activate /Users/me/miniconda/envs/test ; /Us
 
 Where `pyexec` is set to `pythonw` in settings. Accordingly, this calls `itermtab` to create/reuse a tab, executes the python script in the right environment/executable and gives as an interactive prompt (`-i`).
 
+
+## Other Platforms or Terminal Emulator
+
+I guess `itermtab` is the only thing that has to be rewritten for your terminal emulator of choice.
+
+
