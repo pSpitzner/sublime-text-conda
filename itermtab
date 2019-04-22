@@ -64,7 +64,7 @@ osascript &>/dev/null 2>&1 <<EOF
             end repeat
             tell current session of newTab
                 -- don't merge this with semicolon or detection breaks
-                write text "export SUBLIMETAB=${targettab}"
+                write text "export SUBLIMETAB=\"${targettab}\""
                 write text "${cmd}"
             end tell
         end tell

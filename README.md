@@ -139,19 +139,21 @@ Essentially sublime-text-conda is reconfigured to use `itermtab` instead of call
 In `Conda.sublime-build` you find
 
 ```
-"variants":
     [
         {
             "name": "iTerm",
-            "cmd": ["itermtab", "$file", "conda activate", "\\$condaenv", ";", "\\$pyexec", "-i", "$file"],
+            "cmd": ["itermtab", "'$file'", "conda activate", "\\$condaenv", ";", "\\$pyexec", "-i", "'$file'"],
         }
     ]
 ```
 
 Assuming we are editing `~/example.py` and the active environment is `test`, this will internally call
 ```
-itermtab /Users/me/example.py conda activate /Users/me/miniconda/envs/test ; /Users/me/miniconda/envs/test/bin/pythonw -i /Users/me/example.py
+itermtab '/Users/me/example.py' conda activate /Users/me/miniconda/envs/test ; /Users/me/miniconda/envs/test/bin/pythonw -i '/Users/me/example.py'
 ```
+
+Be careful about escaping with `'` and `"` when changing the build-command.
+(Important filenames containing spaces)
 
 Where `pyexec` is set to `pythonw` in settings. Accordingly, this calls `itermtab` to create/reuse a tab, executes the python script in the right environment/executable and gives as an interactive prompt (`-i`).
 
