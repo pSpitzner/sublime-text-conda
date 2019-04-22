@@ -3,7 +3,7 @@
 cmd=""
 args="$@"
 targettab="default"    # set this to the default tab name you want
-profilename="Default"  # set this to the iTerm profile to use
+profilename="Sublime"  # set this to the iTerm profile to use
 
 if (( $# > 1 )); then
     targettab="$1"
@@ -19,26 +19,27 @@ osascript &>/dev/null 2>&1 <<EOF
         repeat with aWindow in windows
             repeat with aTab in tabs of aWindow
                 tell current session of aTab
-                    if ("${targettab}" is (variable named "user.sublimetab")) then
-                        set responding to is at shell prompt of current session of aTab
+                    set candidate to (variable named "user.sublimetab")
+                    if (candidate is "${targettab}") then
+                        set responding to (is at shell prompt of current session of aTab)
                         -- set responding to false
 
-                        if not responding then
+                        if responding then
+                        -- display dialog "responding tab"
+                        tell aTab
+                            select
+                            activate
+                            tell current session
+                                write text ""
+                                write text "${cmd}"
+                                return
+                            end tell
+                        end tell
+                        else
                             -- display dialog "closing dead tab"
                             set parentWindow to aWindow
                             tell aTab to close
                             exit repeat
-                        else
-                            -- display dialog "responding tab"
-                            tell aTab
-                                select
-                                activate
-                                tell current session
-                                    write text ""
-                                    write text "${cmd}"
-                                    return
-                                end tell
-                            end tell
                         end if
                     end if
                 end tell
@@ -62,7 +63,9 @@ osascript &>/dev/null 2>&1 <<EOF
                 delay 0.05
             end repeat
             tell current session of newTab
-                write text "export SUBLIMETAB=${targettab}; ${cmd}"
+                -- don't merge this with semicolon or detection breaks
+                write text "export SUBLIMETAB=${targettab}"
+                write text "${cmd}"
             end tell
         end tell
         return

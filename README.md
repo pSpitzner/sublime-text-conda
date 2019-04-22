@@ -16,8 +16,8 @@ Forked from [mandeep's great sublime-text-conda plugin](https://github.com/mande
 ```
 chmod +x /path/to/itermtab
 ```
-(maybe `ln -s` this to a more favorable path)
-Adapt as needed
+
+Maybe place this in a more favorable path, e.g. `/usr/local/bin/itermtab`. Check permissions.
 
 * An iTerm profile with the name set to `Sublime`. Can be changed in `itermtab`
 
