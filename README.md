@@ -12,12 +12,10 @@ Forked from [mandeep's great sublime-text-conda plugin](https://github.com/mande
 
 * iTerm shell integration
 
-* The attached `itermtab` script needs to be executable
+* The attached `itermtab` script needs to be executable. Maybe place this in a more favorable path, e.g. `/usr/local/bin/itermtab`. Check permissions!
 ```
 chmod +x /path/to/itermtab
 ```
-
-Maybe place this in a more favorable path, e.g. `/usr/local/bin/itermtab`. Check permissions.
 
 * An iTerm profile with the name set to `Sublime`. Can be changed in `itermtab`
 
@@ -125,15 +123,20 @@ EOF
 
 ## Details
 
-The `itermtab` command can be called from terminal:
+The `itermtab` command can be called from any terminal:
 ```
 itermtab foo/bar/ ls -l
 ```
-will create a new tab in iTerm, set its environment variable `$SUBLIMETAB` to `foo/bar/` and call `ls -l`.
+This will create a new tab in iTerm, set its environment variable `$SUBLIMETAB` to `foo/bar/` and call `ls -l`.
 
 Calling `itermtab foo/bar/ ls -l` again, will recycle the tab by checking all tabs for `$SUBLIMETAB`.
 
-Essentially sublime-text-conda is modified to allow this. In `Conda.sublime-build` you find
+If the session is unresponsive (`sleep 10`), the tab is closed and a new one is created.
+
+Essentially sublime-text-conda is reconfigured to use `itermtab` instead of calling python directly.
+(I should make a separate repo, this can be used for running other scripts from sublime...)
+
+In `Conda.sublime-build` you find
 
 ```
 "variants":
@@ -155,6 +158,6 @@ Where `pyexec` is set to `pythonw` in settings. Accordingly, this calls `itermta
 
 ## Other Platforms or Terminal Emulator
 
-I guess `itermtab` is the only thing that has to be rewritten for your terminal emulator of choice.
+`itermtab` is the only thing that has to be rewritten for other terminal emulators. If any other program creates the functionality described above (detect)
 
 
