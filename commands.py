@@ -491,7 +491,10 @@ class ExecuteCondaEnvironmentCommand(CondaCommand):
         try:
             # replace custom conda environment variable if present
             envpos = kwargs['cmd'].index("$condaenv")
-            kwargs['cmd'][envpos] = self.project_data['conda_environment']
+            try:
+                kwargs['cmd'][envpos] = self.project_data['conda_environment']
+            except:
+                kwargs['cmd'][envpos] = 'base'
         except:
             pass
 
